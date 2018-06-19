@@ -4,7 +4,10 @@ import numpy as np
 import DEN
 from tensorflow.examples.tutorials.mnist import input_data
 
-np.random.seed(1004)
+seed = 1004
+np.random.seed(seed)
+tf.set_random_seed(seed)
+
 flags = tf.app.flags
 flags.DEFINE_integer("max_iter", 4300, "Epoch to train")
 flags.DEFINE_float("lr", 0.001, "Learing rate(init) for train")
