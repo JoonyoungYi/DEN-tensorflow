@@ -8,7 +8,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 
 def _save_params(task_id, params):
-    np.save('weights/{}.npy', params)
+    np.save('weights/{}.npy'.format(task_id), params)
 
 
 def main():
