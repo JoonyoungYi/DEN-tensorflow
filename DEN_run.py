@@ -5,6 +5,10 @@ import DEN
 from tensorflow.examples.tutorials.mnist import input_data
 
 
+def _save_params(task_id, params):
+    np.save('weights/{}.npy', params)
+
+
 def main():
     seed = 1004
     np.random.seed(seed)
@@ -13,7 +17,8 @@ def main():
     flags = tf.app.flags
     flags.DEFINE_integer("max_iter", 4300, "Epoch to train")
     flags.DEFINE_float("lr", 0.001, "Learing rate(init) for train")
-    flags.DEFINE_integer("batch_size", 256, "The size of batch for 1 iteration")
+    flags.DEFINE_integer("batch_size", 256,
+                         "The size of batch for 1 iteration")
     flags.DEFINE_string("checkpoint_dir", "checkpoints",
                         "Directory path to save the checkpoints")
     flags.DEFINE_integer("dims", [784, 312, 128, 10],
@@ -24,12 +29,13 @@ def main():
     flags.DEFINE_float("gl_lambda", 0.001, "Group Lasso lambda")
     flags.DEFINE_float("regular_lambda", 0.5, "regularization lambda")
     flags.DEFINE_integer(
-        "ex_k", 10, "The number of units increased in the expansion processing")
+        "ex_k", 10,
+        "The number of units increased in the expansion processing")
     flags.DEFINE_float('loss_thr', 0.01, "Threshold of dynamic expansion")
     flags.DEFINE_float('spl_thr', 0.05, "Threshold of split and duplication")
     FLAGS = flags.FLAGS
 
-    mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
+    mnist = input_data.read_data_sets('data', one_hot=True)
     trainX = mnist.train.images
     valX = mnist.validation.images
     testX = mnist.test.images
@@ -49,8 +55,8 @@ def main():
     avg_perf = []
 
     for t in range(FLAGS.n_classes):
-        data = (trainXs[t], mnist.train.labels, valXs[t], mnist.validation.labels,
-                testXs[t], mnist.test.labels)
+        data = (trainXs[t], mnist.train.labels, valXs[t],
+                mnist.validation.labels, testXs[t], mnist.test.labels)
         model.sess = tf.Session()
         print("\n\n\tTASK %d TRAINING\n" % (t + 1))
 
@@ -60,7 +66,7 @@ def main():
         perf, sparsity, expansion = model.add_task(t + 1, data)
 
         params = model.get_params()
-
+        _save_params(t + 1, params)
         model.destroy_graph()
         model.sess.close()
 
@@ -69,12 +75,14 @@ def main():
         model.load_params(params)
         temp_perfs = []
         for j in range(t + 1):
-            temp_perf = model.predict_perform(j + 1, testXs[j], mnist.test.labels)
+            temp_perf = model.predict_perform(j + 1, testXs[j],
+                                              mnist.test.labels)
             temp_perfs.append(temp_perf)
         avg_perf.append(sum(temp_perfs) / float(t + 1))
         print("   [*] avg_perf: %.4f" % avg_perf[t])
         model.destroy_graph()
         model.sess.close()
+
 
 if __name__ == '__main__':
     main()
