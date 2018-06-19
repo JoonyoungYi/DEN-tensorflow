@@ -35,7 +35,7 @@ def main():
         "The number of units increased in the expansion processing")
     flags.DEFINE_float('loss_thr', 0.01, "Threshold of dynamic expansion")
     flags.DEFINE_float('spl_thr', 0.05, "Threshold of split and duplication")
-    flags.DEFINE_float('n_task', 100, "Threshold of split and duplication")
+    flags.DEFINE_float('n_tasks', 20, "The number of tasks")
     FLAGS = flags.FLAGS
 
     mnist = input_data.read_data_sets('data', one_hot=True)
@@ -44,11 +44,11 @@ def main():
     testX = mnist.test.images
 
     task_permutation = []
-    for task in range(FLAGS.n_task):
+    for task in range(FLAGS.n_tasks):
         task_permutation.append(np.random.permutation(784))
 
     trainXs, valXs, testXs = [], [], []
-    for task in range(FLAGS.n_task):
+    for task in range(FLAGS.n_tasks):
         trainXs.append(trainX[:, task_permutation[task]])
         valXs.append(valX[:, task_permutation[task]])
         testXs.append(testX[:, task_permutation[task]])
@@ -57,7 +57,7 @@ def main():
     params = dict()
     avg_perf = []
 
-    for t in range(FLAGS.n_task):
+    for t in range(FLAGS.n_tasks):
         data = (trainXs[t], mnist.train.labels, valXs[t],
                 mnist.validation.labels, testXs[t], mnist.test.labels)
         model.sess = tf.Session()
