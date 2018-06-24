@@ -3,8 +3,9 @@ import sys
 
 import tensorflow as tf
 import numpy as np
-import DEN
 from tensorflow.examples.tutorials.mnist import input_data
+
+from models import DEN
 
 
 def _save_params(task_id, params):
@@ -53,7 +54,7 @@ def main():
         valXs.append(valX[:, task_permutation[task]])
         testXs.append(testX[:, task_permutation[task]])
 
-    model = DEN.DEN(FLAGS)
+    model = DEN(FLAGS)
     params = dict()
     avg_perf = []
 
@@ -88,6 +89,6 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.stdout = open('output.txt', 'a')
+    sys.stdout = open('output-v1.txt', 'a')
     main()
     sys.stdout.close()
