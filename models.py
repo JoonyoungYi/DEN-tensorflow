@@ -250,6 +250,7 @@ class DEN(object):
                 bottom = tf.nn.relu(tf.matmul(bottom, w) + b)
             w, b = self.extend_top('layer%d' % self.n_layers, len(new_ary))
             self.y = tf.matmul(bottom, w) + b
+
         elif expansion:
             for i in range(1, self.n_layers):
                 if i == 1:
@@ -259,6 +260,7 @@ class DEN(object):
                 bottom = tf.nn.relu(tf.matmul(bottom, w) + b)
             w, b = self.extend_param('layer%d' % self.n_layers, self.ex_k)
             self.y = tf.matmul(bottom, w) + b
+
         elif prediction:
             stamp = self.time_stamp['task%d' % task_id]
             for i in range(1, self.n_layers):
@@ -432,19 +434,17 @@ class DEN(object):
                                               trainY, 'Train')
             expansion_layer = [0, 0]
         else:
-            """ SELECTIVE LEARN """
+            # Task id > 1 인 상황.
+            #
+            # """ SELECTIVE LEARN """
+            #
             print(' [*] Selective retraining')
             self.optimization(self.prev_W, selective=True)
             self.sess.run(tf.global_variables_initializer())
 
             repeated, c_loss = self.run_epoch(
-                self.opt,
-                self.loss,
-                trainX,
-                trainY,
-                'Train',
-                selective=True,
-                s_iter=self.early_training)
+                self.opt, self.loss, trainX, trainY, 'Train', selective=True)
+            # s_iter=self.early_training)
 
             params = self.get_params()
             self.destroy_graph()
@@ -518,7 +518,10 @@ class DEN(object):
                         i + 1)]] = selected_params['layer%d/biases:0' % i]
                     params['layer%d/weight:0' % i] = temp_weight
                     params['layer%d/biases:0' % i] = temp_biases
-            """ Network Expansion """
+
+            #
+            # """ Network Expansion """
+            #
             if c_loss < self.loss_thr:
                 pass
             else:
@@ -675,15 +678,14 @@ class DEN(object):
                   selective=False,
                   s_iter=0,
                   print_pred=True):
-        c_iter, old_loss, window_size = s_iter, 999, 10
+        old_loss, window_size = 999, 10
         loss_window = collections.deque(maxlen=window_size)
-        while (self.max_iter > c_iter):
 
+        for c_iter in range(s_iter, self.max_iter):
             batch_X, batch_Y = self.data_iteration(X, Y, desc)
             _, c_loss = self.sess.run(
                 [opt, loss], feed_dict={self.X: batch_X,
                                         self.Y: batch_Y})
-            c_iter += 1
             print_iter = 100
 
             if desc == 'Train' and c_iter % print_iter == 0:
@@ -716,12 +718,10 @@ class DEN(object):
             return X, Y
 
     def get_performance(self, p, y):
-
         perf_list = []
         for _i in range(self.n_classes):
             roc, perf = ROC_AUC(p[:, _i], y[:, _i])
             perf_list.append(perf)
-
         return np.mean(perf_list)
 
     def predict_perform(self, task_id, X, Y, task_name=None):
