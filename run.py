@@ -36,7 +36,7 @@ def main():
         "The number of units increased in the expansion processing")
     flags.DEFINE_float('loss_thr', 0.01, "Threshold of dynamic expansion")
     flags.DEFINE_float('spl_thr', 0.05, "Threshold of split and duplication")
-    flags.DEFINE_float('n_tasks', 20, "The number of tasks")
+    flags.DEFINE_float('n_tasks', 100, "The number of tasks")
     FLAGS = flags.FLAGS
 
     mnist = input_data.read_data_sets('data', one_hot=True)
@@ -47,6 +47,7 @@ def main():
     task_permutation = []
     for task in range(FLAGS.n_tasks):
         task_permutation.append(np.random.permutation(784))
+    np.save('data/task_permutations.npy', task_permutation)
 
     trainXs, valXs, testXs = [], [], []
     for task in range(FLAGS.n_tasks):
@@ -89,6 +90,6 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.stdout = open('output-v1.txt', 'a')
+    # sys.stdout = open('output-v2.txt', 'a')
     main()
-    sys.stdout.close()
+    # sys.stdout.close()
