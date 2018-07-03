@@ -18,7 +18,7 @@ def main():
     tf.set_random_seed(seed)
 
     flags = tf.app.flags
-    flags.DEFINE_integer("max_iter", 4300, "Epoch to train")
+    flags.DEFINE_integer("max_iter", 20000, "Epoch to train")
     flags.DEFINE_float("lr", 0.001, "Learing rate(init) for train")
     flags.DEFINE_integer("batch_size", 256,
                          "The size of batch for 1 iteration")
@@ -35,8 +35,8 @@ def main():
         "ex_k", 10,
         "The number of units increased in the expansion processing")
     flags.DEFINE_float('loss_thr', 0.01, "Threshold of dynamic expansion")
-    flags.DEFINE_float('spl_thr', 0.05, "Threshold of split and duplication")
-    flags.DEFINE_float('n_tasks', 100, "The number of tasks")
+    flags.DEFINE_float('spl_thr', 0.01, "Threshold of split and duplication")
+    flags.DEFINE_float('n_tasks', 10, "The number of tasks")
     FLAGS = flags.FLAGS
 
     mnist = input_data.read_data_sets('data', one_hot=True)
@@ -90,6 +90,6 @@ def main():
 
 
 if __name__ == '__main__':
-    # sys.stdout = open('output-v2.txt', 'a')
+    # sys.stdout = open('output.txt', 'a')
     main()
     # sys.stdout.close()

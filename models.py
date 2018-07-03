@@ -686,7 +686,7 @@ class DEN(object):
             _, c_loss = self.sess.run(
                 [opt, loss], feed_dict={self.X: batch_X,
                                         self.Y: batch_Y})
-            print_iter = 100
+            print_iter = 1000
 
             if desc == 'Train' and c_iter % print_iter == 0:
                 val_preds, val_loss = self.sess.run(
@@ -704,8 +704,8 @@ class DEN(object):
                     break
                 old_loss = mean_loss
 
-            if selective and c_iter >= self.early_training:
-                break
+            # if selective and c_iter >= self.early_training:
+            #     break
 
         return c_iter, c_loss
 
