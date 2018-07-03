@@ -35,7 +35,7 @@ def main():
         "ex_k", 10,
         "The number of units increased in the expansion processing")
     flags.DEFINE_float('loss_thr', 0.01, "Threshold of dynamic expansion")
-    flags.DEFINE_float('spl_thr', 0.01, "Threshold of split and duplication")
+    flags.DEFINE_float('spl_thr', 0.005, "Threshold of split and duplication")
     flags.DEFINE_float('n_tasks', 10, "The number of tasks")
     FLAGS = flags.FLAGS
 

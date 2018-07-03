@@ -686,7 +686,7 @@ class DEN(object):
             _, c_loss = self.sess.run(
                 [opt, loss], feed_dict={self.X: batch_X,
                                         self.Y: batch_Y})
-            print_iter = 1000
+            print_iter = 100
 
             if desc == 'Train' and c_iter % print_iter == 0:
                 val_preds, val_loss = self.sess.run(
@@ -697,8 +697,8 @@ class DEN(object):
                 mean_loss = sum(loss_window) / float(window_size)
                 val_perf = self.get_performance(val_preds, self.valY)
 
-                if print_pred == True:
-                    print(" [*] iter: %d, val loss: %.4f, val perf: %.4f" %
+                if print_pred == True and c_iter % (print_iter * 10) == 0:
+                    print(" [*] iter: %5d, val loss: %.4f, val perf: %.4f" %
                           (c_iter, val_loss, val_perf))
                 if abs(old_loss - mean_loss) < 1e-6:
                     break
